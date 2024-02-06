@@ -23,3 +23,7 @@ https://www.waveshare.net/w/upload/7/7e/ESP8266_e-paper.pdf
 ​	epd4in2b_V2-demo理论上可以驱动同分辨率三色的屏
 
 于是复制epd2in13b_V4-demo的启动参数再把epd4in2_V2-demo部分函数和命令混合到epd4in2b_V2-demo就可以了
+
+
+
+测试图片取自https://www.bilibili.com/video/BV1Fw411K7jA
