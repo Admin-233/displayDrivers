@@ -1,7 +1,7 @@
 
 #include "GxEPD2_3C.h"
 
-#include <Fonts/FreeMonoBold9pt7b.h>
+#include "FreeMonoBold9pt7b.h"
 
 #include "GxEPD2_display_selection_new_style.h"
 
