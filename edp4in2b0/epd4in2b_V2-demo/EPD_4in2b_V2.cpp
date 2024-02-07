@@ -30,6 +30,43 @@
 #include "EPD_4in2b_V2.h"
 #include "Debug.h"
 
+const unsigned char LUT_ALL[233]={							
+0x01,	0x0A,	0x1B,	0x0F,	0x03,	0x01,	0x01,	
+0x05,	0x0A,	0x01,	0x0A,	0x01,	0x01,	0x01,	
+0x05,	0x08,	0x03,	0x02,	0x04,	0x01,	0x01,	
+0x01,	0x04,	0x04,	0x02,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x0A,	0x1B,	0x0F,	0x03,	0x01,	0x01,	
+0x05,	0x4A,	0x01,	0x8A,	0x01,	0x01,	0x01,	
+0x05,	0x48,	0x03,	0x82,	0x84,	0x01,	0x01,	
+0x01,	0x84,	0x84,	0x82,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x0A,	0x1B,	0x8F,	0x03,	0x01,	0x01,	
+0x05,	0x4A,	0x01,	0x8A,	0x01,	0x01,	0x01,	
+0x05,	0x48,	0x83,	0x82,	0x04,	0x01,	0x01,	
+0x01,	0x04,	0x04,	0x02,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x8A,	0x1B,	0x8F,	0x03,	0x01,	0x01,	
+0x05,	0x4A,	0x01,	0x8A,	0x01,	0x01,	0x01,	
+0x05,	0x48,	0x83,	0x02,	0x04,	0x01,	0x01,	
+0x01,	0x04,	0x04,	0x02,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x8A,	0x9B,	0x8F,	0x03,	0x01,	0x01,	
+0x05,	0x4A,	0x01,	0x8A,	0x01,	0x01,	0x01,	
+0x05,	0x48,	0x03,	0x42,	0x04,	0x01,	0x01,	
+0x01,	0x04,	0x04,	0x42,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x01,	0x00,	0x00,	0x00,	0x00,	0x01,	0x01,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	
+0x02,	0x00,	0x00,	0x07,	0x17,	0x41,	0xA8,	
+0x32,	0x30,						
+};		
+
 /******************************************************************************
 function :	Software reset
 parameter:
@@ -91,6 +128,14 @@ void EPD_4IN2B_V2_TurnOnDisplay(void)
 {
     EPD_4IN2B_V2_SendCommand(0x22);
 	EPD_4IN2B_V2_SendData(0xF7);
+    EPD_4IN2B_V2_SendCommand(0x20);
+    EPD_4IN2B_V2_ReadBusy();
+}
+
+void EPD_4IN2B_V2_TurnOnDisplay_4Gray(void)
+{
+    EPD_4IN2B_V2_SendCommand(0x22);
+	EPD_4IN2B_V2_SendData(0xCF);
     EPD_4IN2B_V2_SendCommand(0x20);
     EPD_4IN2B_V2_ReadBusy();
 }
@@ -160,6 +205,70 @@ void EPD_4IN2B_V2_Init(void)
 	EPD_4IN2B_V2_ReadBusy();
 }
 
+static void EPD_4IN2B_V2_4Gray_lut(void)
+{
+    unsigned char i;
+
+    //WS byte 0~152, the content of VS[nX-LUTm], TP[nX], RP[n], SR[nXY], FR[n] and XON[nXY]
+    EPD_4IN2B_V2_SendCommand(0x32);					
+    for(i=0;i<227;i++)
+    {
+        EPD_4IN2B_V2_SendData(LUT_ALL[i]);
+    }	
+    //WS byte 153, the content of Option for LUT end	
+    EPD_4IN2B_V2_SendCommand(0x3F);					
+    EPD_4IN2B_V2_SendData(LUT_ALL[i++]);
+
+    //WS byte 154, the content of gate leve
+    EPD_4IN2B_V2_SendCommand(0x03);					
+    EPD_4IN2B_V2_SendData(LUT_ALL[i++]);//VGH
+
+    //WS byte 155~157, the content of source level
+    EPD_4IN2B_V2_SendCommand(0x04);					
+    EPD_4IN2B_V2_SendData(LUT_ALL[i++]);//VSH1
+    EPD_4IN2B_V2_SendData(LUT_ALL[i++]);//VSH2
+    EPD_4IN2B_V2_SendData(LUT_ALL[i++]);//VSL
+
+    //WS byte 158, the content of VCOM level
+    EPD_4IN2B_V2_SendCommand(0x2c);					
+    EPD_4IN2B_V2_SendData(LUT_ALL[i++]);//VCOM
+}
+
+void EPD_4IN2B_V2_Init_4Gray(void)
+{
+	EPD_4IN2B_V2_Reset();
+
+	EPD_4IN2B_V2_ReadBusy();   
+	EPD_4IN2B_V2_SendCommand(0x12);  //SWRESET
+	EPD_4IN2B_V2_ReadBusy();   
+
+	EPD_4IN2B_V2_SendCommand(0x21); //  Display update control
+	EPD_4IN2B_V2_SendData(0x80);	
+	EPD_4IN2B_V2_SendData(0x80);
+
+	EPD_4IN2B_V2_SendCommand(0x3C); //BorderWavefrom
+	EPD_4IN2B_V2_SendData(0x05);
+	
+	EPD_4IN2B_V2_SendCommand(0x11); //data entry mode       
+	EPD_4IN2B_V2_SendData(0x03);
+
+    EPD_4IN2B_V2_SendCommand(0x0C); //BTST
+    EPD_4IN2B_V2_SendData(0x8B);//8B
+    EPD_4IN2B_V2_SendData(0x9C);//9C
+    EPD_4IN2B_V2_SendData(0xA4);//96 A4
+    EPD_4IN2B_V2_SendData(0x0F);//0F	
+
+    EPD_4IN2B_V2_4Gray_lut(); //LUT
+
+	EPD_4IN2B_V2_SetWindows(0, 0, EPD_4IN2B_V2_WIDTH-1, EPD_4IN2B_V2_HEIGHT-1);
+	EPD_4IN2B_V2_SetCursor(0, 0);
+
+	EPD_4IN2B_V2_SendCommand(0x18); //Read built-in temperature sensor
+	EPD_4IN2B_V2_SendData(0x80);	
+
+	EPD_4IN2B_V2_ReadBusy();
+}
+
 /******************************************************************************
 function :	Clear screen
 parameter:
@@ -217,6 +326,103 @@ void EPD_4IN2B_V2_Display(const UBYTE *blackimage, const UBYTE *ryimage)
 	EPD_4IN2B_V2_TurnOnDisplay();
 }
 
+void EPD_4IN2B_V2_Display_4Gray(const UBYTE *Image)
+{
+    UDOUBLE i,j,k,m;
+    UBYTE temp1,temp2,temp3;
+/****Color display description****
+      white  gray2  gray1  black
+0x10|  01     01     00     00
+0x13|  01     00     01     00
+*********************************/
+  
+	EPD_4IN2B_V2_SendCommand(0x24);	       
+	// EPD_4IN2_HEIGHT
+	// EPD_4IN2_WIDTH
+	for(m = 0; m<EPD_4IN2B_V2_HEIGHT;m++)
+		for(i=0;i<EPD_4IN2B_V2_WIDTH/8;i++)
+		{
+			temp3=0;
+			for(j=0;j<2;j++)	
+			{
+				
+				temp1 = Image[(m*(EPD_4IN2B_V2_WIDTH/8)+i)*2+j];
+				for(k=0;k<2;k++)	
+				{
+					temp2 = temp1&0xC0 ;
+					if(temp2 == 0xC0)
+						temp3 |= 0x01;//white
+					else if(temp2 == 0x00)
+						temp3 |= 0x00;  //black
+					else if(temp2 == 0x80) 
+						temp3 |= 0x00;  //gray1
+					else //0x40
+						temp3 |= 0x01; //gray2
+					temp3 <<= 1;	
+					
+					temp1 <<= 2;
+					temp2 = temp1&0xC0 ;
+					if(temp2 == 0xC0)  //white
+						temp3 |= 0x01;
+					else if(temp2 == 0x00) //black
+						temp3 |= 0x00;
+					else if(temp2 == 0x80)
+						temp3 |= 0x00; //gray1
+					else    //0x40
+							temp3 |= 0x01;	//gray2	
+					if(j!=1 || k!=1)				
+						temp3 <<= 1;
+					
+					temp1 <<= 2;
+				}
+				
+			 }
+			EPD_4IN2B_V2_SendData(temp3);			
+		}
+   
+    // new  data
+    EPD_4IN2B_V2_SendCommand(0x26);	 
+	for(m = 0; m<EPD_4IN2B_V2_HEIGHT;m++)
+		for(i=0;i<EPD_4IN2B_V2_WIDTH/8;i++)
+		{
+			temp3=0;
+			for(j=0;j<2;j++)	
+			{
+				temp1 = Image[(m*(EPD_4IN2B_V2_WIDTH/8)+i)*2+j];
+				for(k=0;k<2;k++)	
+				{
+					temp2 = temp1&0xC0 ;
+					if(temp2 == 0xC0)
+						temp3 |= 0x01;//white
+					else if(temp2 == 0x00)
+						temp3 |= 0x00;  //black
+					else if(temp2 == 0x80) 
+						temp3 |= 0x01;  //gray1
+					else //0x40
+						temp3 |= 0x00; //gray2
+					temp3 <<= 1;	
+					
+					temp1 <<= 2;
+					temp2 = temp1&0xC0 ;
+					if(temp2 == 0xC0)  //white
+						temp3 |= 0x01;
+					else if(temp2 == 0x00) //black
+						temp3 |= 0x00;
+					else if(temp2 == 0x80)
+						temp3 |= 0x01; //gray1
+					else    //0x40
+							temp3 |= 0x00;	//gray2
+					if(j!=1 || k!=1)					
+						temp3 <<= 1;
+					
+					temp1 <<= 2;
+				}
+				
+			 }
+			EPD_4IN2B_V2_SendData(temp3);	
+		}
+    EPD_4IN2B_V2_TurnOnDisplay_4Gray();
+}
 /******************************************************************************
 function :	Sends the image buffer Half image
 parameter:

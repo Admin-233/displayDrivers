@@ -36,6 +36,12 @@ void setup()
   DEV_Delay_ms(2000);
 #endif
 
+#if 0 //用于测试灰度刷新，但是好像不太成功
+  printf("show image for array\r\n");
+  EPD_4IN2B_V2_Display_4Gray(gImage_4in2_4Gray);
+  DEV_Delay_ms(2000);
+#endif
+
 #if 1   //Not enough memory, sending in four times: black 2times,red 2times
   /*Horizontal screen*/
   //1.Draw black image

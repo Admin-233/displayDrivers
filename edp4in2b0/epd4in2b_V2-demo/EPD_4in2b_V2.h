@@ -37,11 +37,14 @@
 #define EPD_4IN2B_V2_HEIGHT      300
 
 void EPD_4IN2B_V2_Init(void);
+void EPD_4IN2B_V2_Init_4Gray(void);
 void EPD_4IN2B_V2_Clear(void);
 void EPD_4IN2B_V2_Display(const UBYTE *blackimage, const UBYTE *ryimage);
+void EPD_4IN2B_V2_Display_4Gray(const UBYTE *Image);
 void EPD_4IN2B_V2_SendHalfBimage(char TopOrBottom, const UBYTE *image);
 void EPD_4IN2B_V2_SendHalfRYimage(char TopOrBottom, const UBYTE *image);
 void EPD_4IN2B_V2_Sleep(void);
 void EPD_4IN2B_V2_TurnOnDisplay(void);
+void EPD_4IN2B_V2_TurnOnDisplay_4Gray(void);
 
 #endif

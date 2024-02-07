@@ -34,6 +34,7 @@
 
 extern const unsigned char gImage_4in2bc_b[];
 extern const unsigned char gImage_4in2bc_ry[];
+extern const unsigned char gImage_4in2_4Gray[];
 
 #endif
 /* FILE END */
