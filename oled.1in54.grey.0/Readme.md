@@ -4,8 +4,10 @@
 
 测试平台esp8266
 
-SPI协议：
+接口定义：
 
-​	SCK->CLK
+SPI
 
-​	SDA->MOSI
+|	SCK->CLK
+
+|	SDA->MOSI
